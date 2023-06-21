@@ -1,27 +1,31 @@
 ﻿using Unity.Entities;
 using Unity.Mathematics;
-using UnityEngine;
 
 namespace Assets.script.ComponentsAndTags
 {
-    public struct BulletSpawn : IComponentData
+    public struct SpawnBullet : IComponentData
     {
         public Entity BulletPrefab;
-        public Entity position;
-        public float3 translation;
+        public float spawnSpeed;
+        public float lastSpawnTime;
+    }
+
+    public struct BulletComponent : IComponentData, IEnableableComponent
+    { 
     }
 
     public struct BulletMove : IComponentData
     {
-        public int state;
-        public float range;
         public float speed;
-
     }
 
-    public struct Bullet : IComponentData
+    public struct BulletRange : IComponentData
     {
-        public int damage;
+        public float range;
+    }
 
+    public struct BulletDamage : IComponentData
+    {
+        public float damage;
     }
 }
