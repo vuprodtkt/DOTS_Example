@@ -1,6 +1,5 @@
 using Assets.script.ComponentsAndTags;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -30,7 +29,7 @@ public partial struct SpawnBulletSystem : ISystem
                 {
                     var bulletEntity = state.EntityManager.Instantiate(BulletSpawnComponent.ValueRO.BulletPrefab);
                     state.EntityManager.SetComponentData(bulletEntity, 
-                        new LocalTransform { Position = localToWorldComponent.ValueRO.Position, Scale = (float)1 });
+                        new LocalTransform { Position = localToWorldComponent.ValueRO.Position, Scale = 1f, Rotation = quaternion.identity });
                     BulletSpawnComponent.ValueRW.lastSpawnTime = BulletSpawnComponent.ValueRO.spawnSpeed;
                 }
                 else

@@ -1,25 +1,26 @@
-﻿using Unity.Entities;
+﻿using Unity.Collections;
+using Unity.Entities;
 using Unity.Mathematics;
-using UnityEditor;
-using UnityEngine;
 
 namespace Assets.script.ComponentsAndTags
 {
-    public struct SpawnEnemy : IComponentData
+    public partial struct SpawnEnemy : IComponentData
     {
-        public Entity EnemyPrefab;
-        public float3 position;
-        public float3 translation;
+        public Entity enemyPrefab;
         public int totalEnemy;
         public int rowSpawnEnemy;
     }
 
-    public struct EnemyComponent: IComponentData, IEnableableComponent
+    public partial struct SpawnEnemyTag : IComponentData
+    {
+    }
+
+    public partial struct EnemyComponent: IComponentData, IEnableableComponent
     {
 
     }
 
-    public struct EnemyMove : IComponentData
+    public partial struct EnemyMove : IComponentData
     {
         public float speed;
         public float3 direction;
@@ -27,7 +28,7 @@ namespace Assets.script.ComponentsAndTags
         public float timeMoveVertical;
     }
 
-    public struct EnemyRange : IComponentData
+    public partial struct EnemyRange : IComponentData
     {
         public float minHorizontal;
         public float maxHorizontal;

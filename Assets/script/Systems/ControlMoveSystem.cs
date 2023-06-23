@@ -19,7 +19,11 @@ public partial struct ControlMoveSystem : ISystem
         // Move Player
         float horizontalInput = Input.GetAxis("Horizontal");
         float VerticalInput = Input.GetAxis("Vertical");
-        new ControlMoveJob { deltaTime = SystemAPI.Time.DeltaTime, horizontalInput = horizontalInput, verticalInput = VerticalInput }.ScheduleParallel();
+        new ControlMoveJob { 
+            deltaTime = SystemAPI.Time.DeltaTime, 
+            horizontalInput = horizontalInput, 
+            verticalInput = VerticalInput 
+        }.ScheduleParallel();
     }
 
     public void OnDestroy(ref SystemState state)

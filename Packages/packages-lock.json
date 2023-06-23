@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.cortexdeveloper.ecs.messages": {
+      "version": "https://github.com/CortexDeveloper/ecs-messages.git?path=src/ecs-messages/Assets/Package#0.3.2",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "66a13892747d33c20efa0f08ae5991bb904b7802"
+    },
     "com.unity.burst": {
       "version": "1.8.4",
       "depth": 1,

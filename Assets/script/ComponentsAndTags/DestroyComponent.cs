@@ -2,7 +2,7 @@
 
 namespace Assets.script.ComponentsAndTags
 {
-    public class DestroyComponent : IComponentData
+    public partial struct DestroyComponent : IComponentData
     {
         
     }

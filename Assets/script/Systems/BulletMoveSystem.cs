@@ -17,7 +17,9 @@ public partial struct BulletMoveSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         //move bullet
-        new BulletMoveJob { deltaTime = SystemAPI.Time.DeltaTime }.ScheduleParallel();
+        new BulletMoveJob { 
+            deltaTime = SystemAPI.Time.DeltaTime 
+        }.ScheduleParallel();
     }
 
     public void OnDestroy(ref SystemState state)

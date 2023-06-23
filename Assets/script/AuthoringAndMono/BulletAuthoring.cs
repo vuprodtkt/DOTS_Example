@@ -9,6 +9,7 @@ namespace Assets.script.AuthoringAndMono
     {
         public float speed = 10f;
         public float maxRange = 15f;
+        public float damage = 50f;
     }
 
     public class BulletAuthoringBake : Baker<BulletAuthoring>
@@ -27,6 +28,10 @@ namespace Assets.script.AuthoringAndMono
             AddComponent(Entity, new ComponentsAndTags.BulletComponent
             {
             
+            });
+            AddComponent(Entity, new ComponentsAndTags.BulletDamage
+            {
+                damage = authoring.damage,
             });
         }
     }

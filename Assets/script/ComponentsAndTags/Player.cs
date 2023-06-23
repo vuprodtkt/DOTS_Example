@@ -5,24 +5,24 @@ using UnityEngine;
 
 namespace Assets.script.ComponentsAndTags
 {
-    public struct SpawnPlayer : IComponentData
+    public partial struct SpawnPlayer : IComponentData
     {
         public Entity PlayerPrefab;
         public float3 position;
         public bool isSpawn;
     }
 
-    public struct PlayerComponent: IComponentData
+    public partial struct PlayerComponent: IComponentData
     {
 
     }
 
-    public struct PlayerMove : IComponentData
+    public partial struct PlayerMove : IComponentData
     {
         public float speed;
     }
 
-    public struct PlayerMoveRange : IComponentData
+    public partial struct PlayerMoveRange : IComponentData
     {
         public float minHorizontal;
         public float maxHorizontal;
@@ -30,7 +30,7 @@ namespace Assets.script.ComponentsAndTags
         public float maxVertical;
     }
 
-    public struct PlayerCannon : IComponentData
+    public partial struct PlayerCannon : IComponentData
     {
 
     }

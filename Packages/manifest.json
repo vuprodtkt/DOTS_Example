@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.cortexdeveloper.ecs.messages": "https://github.com/CortexDeveloper/ecs-messages.git?path=src/ecs-messages/Assets/Package#0.3.2",
     "com.unity.collab-proxy": "2.0.4",
     "com.unity.entities": "1.0.0-pre.65",
     "com.unity.entities.graphics": "1.0.10",

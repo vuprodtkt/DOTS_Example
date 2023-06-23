@@ -34,6 +34,10 @@ namespace Assets.script.AuthoringAndMono
                 minVertical = authoring.minVertical,
                 maxVertical = authoring.maxVertical,
             });
+            AddComponent(Entity, new ComponentsAndTags.EnemyComponent
+            {
+
+            });
         }
     }
 }
