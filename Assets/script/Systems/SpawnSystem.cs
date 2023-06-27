@@ -64,7 +64,7 @@ public partial struct SpawnSystem : ISystem
             if(!spawnPlayerComponent.ValueRO.isSpawn)
             {
                 var PlayerEntity = ecb.Instantiate(spawnPlayerComponent.ValueRO.PlayerPrefab);
-                ecb.SetComponent(PlayerEntity, new LocalTransform { Position = spawnPlayerComponent.ValueRO.position, Scale = (float)1 });
+                ecb.SetComponent(PlayerEntity, new LocalTransform { Position = spawnPlayerComponent.ValueRO.position, Scale = (float)30, Rotation = quaternion.identity });
                 spawnPlayerComponent.ValueRW.isSpawn = true;
             }
         }
