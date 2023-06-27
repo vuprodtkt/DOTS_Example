@@ -20,6 +20,7 @@ namespace Assets.script.Systems
 
         }
 
+        [BurstCompile]
         public partial struct JobCheckCollide : ITriggerEventsJob
         {
             public ComponentLookup<EnemyComponent> enemyLookup;

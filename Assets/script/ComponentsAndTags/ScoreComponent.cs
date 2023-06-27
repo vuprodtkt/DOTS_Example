@@ -7,4 +7,9 @@ namespace Assets.script.ComponentsAndTags
     {
         public int score;
     }
+
+    public partial struct AddScoreComponent : IComponentData
+    {
+        public int score;
+    }
 }

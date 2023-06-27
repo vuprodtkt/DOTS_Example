@@ -22,6 +22,8 @@ public partial struct TargetDamagedSystem : ISystem
             ecb.RemoveComponent<TargetDamagedComponent>(entity);
             if(healthComponent.ValueRO.health <= 0)
             {
+                var e = ecb.CreateEntity();
+                ecb.AddComponent(e, new AddScoreComponent { score = 5 });
                 ecb.AddComponent<DestroyComponent>(entity);
             }
         }

@@ -14,8 +14,17 @@ public partial struct BulletMoveSystem : ISystem
 
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         //move bullet
         new BulletMoveJob { 
             deltaTime = SystemAPI.Time.DeltaTime 
@@ -28,6 +37,7 @@ public partial struct BulletMoveSystem : ISystem
     }
 }
 
+[BurstCompile]
 public partial struct BulletMoveJob : IJobEntity
 {
     public float deltaTime;

@@ -16,7 +16,6 @@ public partial struct EnemyMoveSystem : ISystem
     {
         //move enemy
         new EnemyMoveJob { deltaTime = SystemAPI.Time.DeltaTime }.ScheduleParallel();
-
     }
 
     public void OnDestroy(ref SystemState state)
@@ -32,7 +31,7 @@ public partial struct EnemyMoveJob : IJobEntity
     void Execute(RefRW<LocalTransform> tfComponent, RefRW<EnemyMove> moveComponent, RefRO<EnemyRange> moveRangeComponent)
     {
         float3 direction = moveComponent.ValueRO.direction;
-        float rangeMovement = moveComponent.ValueRO.speed * deltaTime;
+        float rangeMovement = moveComponent.ValueRO.speed * (float)0.01;
         //move horizontal
         tfComponent.ValueRW.Position += rangeMovement * direction;
         if (tfComponent.ValueRO.Position.z + rangeMovement > moveRangeComponent.ValueRO.maxHorizontal)
@@ -52,7 +51,9 @@ public partial struct EnemyMoveJob : IJobEntity
         }
         if (tfComponent.ValueRO.Position.y <= moveRangeComponent.ValueRO.minVertical)
         {
+            //game over
             tfComponent.ValueRW.Position.y = moveRangeComponent.ValueRO.maxVertical;
+
         }
     }
 }

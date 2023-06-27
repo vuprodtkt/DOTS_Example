@@ -239,6 +239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 808553576}
   - component: {fileID: 808553575}
+  - component: {fileID: 808553577}
   m_Layer: 0
   m_Name: Config
   m_TagString: Untagged
@@ -261,9 +262,9 @@ MonoBehaviour:
   listPrefab:
   - {fileID: 3972705840718362054, guid: c7df4d1180636ee43bd8658f178ed5b1, type: 3}
   - {fileID: 2553312063705278607, guid: 1b93fc856e162d740a659fd90a382ddd, type: 3}
-  enemy1Prefab: {fileID: 3972705840718362054, guid: c7df4d1180636ee43bd8658f178ed5b1,
+  enemy1Prefab: {fileID: 5956208386214000765, guid: 16785bb2993e02f40984836a47e80e43,
     type: 3}
-  enemy2Prefab: {fileID: 2553312063705278607, guid: 1b93fc856e162d740a659fd90a382ddd,
+  enemy2Prefab: {fileID: 5956208386214000765, guid: aa28e3f26d96e144fb992041236e0e1d,
     type: 3}
   listNumEnemy: 1400000028000000
 --- !u!4 &808553576
@@ -281,6 +282,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &808553577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 808553574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12c044fc9f453e9419f7a7bb215f4ec9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mesh0: {fileID: 4300002, guid: 882656347ff33c34c97eba01dccf0b5d, type: 3}
+  mesh1: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+  material0: {fileID: 2100000, guid: dadf8da513ad4164e8ebb871401829c0, type: 2}
+  material1: {fileID: 2100000, guid: b05fd45251f9e16459b938b16fae5786, type: 2}
 --- !u!1 &1691226021
 GameObject:
   m_ObjectHideFlags: 0
@@ -292,6 +309,8 @@ GameObject:
   - component: {fileID: 1691226024}
   - component: {fileID: 1691226023}
   - component: {fileID: 1691226022}
+  - component: {fileID: 1691226025}
+  - component: {fileID: 1691226026}
   m_Layer: 0
   m_Name: Spawner
   m_TagString: Untagged
@@ -324,10 +343,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91013b4d7588ee34e970ce27e7712128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemyPrefab: {fileID: 3972705840718362054, guid: c7df4d1180636ee43bd8658f178ed5b1,
-    type: 3}
-  totalEnemy: 20
-  rowSpawnEnemy: 4
   PlayerPrefab: {fileID: 7363706545810723577, guid: afa55126521ecef49b5cadd2fc3d9662,
     type: 3}
   initPositionPlayer:
@@ -349,3 +364,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1691226025
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691226021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0699158facdb5b44285de618f9b5ac91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+--- !u!114 &1691226026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1691226021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08882dac72a104b49853d3dbef55d504, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  score: 0

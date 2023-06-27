@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using Unity.Rendering;
 using Unity.Transforms;
 
 [BurstCompile]
@@ -10,17 +11,25 @@ public partial struct SpawnSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.Enabled = false;
+        state.RequireForUpdate<StateGameComponent>();
     }
 
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         //state.Enabled = false;
-        //state.World.GetExistingSystem<SpawnSystem>();
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if(stateGanmecomponent.ValueRO.state != 1 )
+            {
+                return;
+            }
+        }
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
         //spawn enemy
         var singletonComponent = SystemAPI.GetSingleton<ConfigComponent>();
-        // use list component
+        // spanwn using config (list component)
         foreach (var levelComponent in SystemAPI.Query<RefRW<LevelComponent>>().WithAll<SpawnEnemyTag>())
         {
             if (levelComponent.ValueRO.currentLevel == levelComponent.ValueRO.nextLevel && levelComponent.ValueRO.currentLevel < levelComponent.ValueRO.maxLevel)
@@ -36,8 +45,12 @@ public partial struct SpawnSystem : ISystem
                     while (totalEnemy > 0 && c < col)
                     {
                         var EnemyEntity = ecb.Instantiate(e);
-                        float3 position = new float3(1, (float)(9 - 1.5 * r), (float)(-15 + 2 * c));
-                        ecb.SetComponent(EnemyEntity, new LocalTransform { Position = position, Scale = 1f, Rotation = quaternion.identity });
+                        float3 position = new float3(1, (float)(9 - 2 * r), (float)(-15 + 2 * c));
+                        ecb.SetComponent(EnemyEntity
+                            , new LocalTransform { Position = position
+                                                , Scale = 2f
+                                                , Rotation = quaternion.identity
+                                                });
                         c++;
                     }
                 }
@@ -65,3 +78,4 @@ public partial struct SpawnSystem : ISystem
 
     }
 }
+

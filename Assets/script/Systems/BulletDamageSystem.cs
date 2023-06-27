@@ -12,7 +12,8 @@ public partial struct BulletDamageSystem : ISystem
     {
         state.RequireForUpdate<BulletDamageComponent>();
     }
-    
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
