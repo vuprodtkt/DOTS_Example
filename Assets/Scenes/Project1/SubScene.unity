@@ -239,7 +239,6 @@ GameObject:
   m_Component:
   - component: {fileID: 808553576}
   - component: {fileID: 808553575}
-  - component: {fileID: 808553577}
   m_Layer: 0
   m_Name: Config
   m_TagString: Untagged
@@ -282,22 +281,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &808553577
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 808553574}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 12c044fc9f453e9419f7a7bb215f4ec9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mesh0: {fileID: 4300000, guid: 2e9c70f1d4d952d468f485be07800f25, type: 3}
-  mesh1: {fileID: 4300002, guid: 882656347ff33c34c97eba01dccf0b5d, type: 3}
-  material0: {fileID: 2100000, guid: 835e53b08ca63ad4fa073c66d61e01be, type: 2}
-  material1: {fileID: 2100000, guid: 835e53b08ca63ad4fa073c66d61e01be, type: 2}
 --- !u!1 &1691226021
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,7 +326,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91013b4d7588ee34e970ce27e7712128, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PlayerPrefab: {fileID: 7143634376702641908, guid: 1753068f8eeb02249909f20c0a0232cd,
+  PlayerPrefab: {fileID: 957711310374170602, guid: def8563995ccee3459b2493299cdc641,
     type: 3}
   initPositionPlayer:
     x: 1

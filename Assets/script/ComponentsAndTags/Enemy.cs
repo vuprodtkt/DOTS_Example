@@ -1,6 +1,7 @@
 ﻿using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
+using UnityEngine.Rendering;
 
 namespace Assets.script.ComponentsAndTags
 {
@@ -17,7 +18,9 @@ namespace Assets.script.ComponentsAndTags
 
     public partial struct EnemyComponent: IComponentData, IEnableableComponent
     {
-
+        public int state;
+        public BatchMeshID final_meshID;
+        public BatchMaterialID final_materialID;
     }
 
     public partial struct EnemyMove : IComponentData

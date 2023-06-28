@@ -1,7 +1,9 @@
-﻿using Unity.Entities;
+﻿using System.Collections.Generic;
+using Unity.Entities;
 using Unity.Mathematics;
-using UnityEditor;
+using Unity.Rendering;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace Assets.script.AuthoringAndMono
 {
@@ -13,10 +15,16 @@ namespace Assets.script.AuthoringAndMono
         public float maxHorizontal = 15;
         public float minVertical = -9;
         public float maxVertical = 9;
+
+        public Mesh finalMeshEnemy;
+        public Material finalMaterialEnemy;
     }
 
     public class EnemyAuthoringBake : Baker<EnemyAuthoring>
     {
+        public Dictionary<Mesh, BatchMeshID> m_MeshMapping = new Dictionary<Mesh, BatchMeshID>();
+        public Dictionary<Material, BatchMaterialID> m_MaterialMapping = new Dictionary<Material, BatchMaterialID>();
+
         public override void Bake(EnemyAuthoring authoring)
         {
             Entity Entity = GetEntity(TransformUsageFlags.Dynamic);
@@ -36,8 +44,30 @@ namespace Assets.script.AuthoringAndMono
             });
             AddComponent(Entity, new ComponentsAndTags.EnemyComponent
             {
-
+                state = 0,
+                final_meshID = registerMesh(authoring.finalMeshEnemy),
+                final_materialID = registerMaterial(authoring.finalMaterialEnemy),
             });
+        }
+
+        public BatchMeshID registerMesh(Mesh mesh)
+        {
+            var entitiesGraphicsSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
+            if (!m_MeshMapping.ContainsKey(mesh))
+            {
+                m_MeshMapping.Add(mesh, entitiesGraphicsSystem.RegisterMesh(mesh));
+            }
+            return m_MeshMapping[mesh];
+        }
+
+        public BatchMaterialID registerMaterial(Material material)
+        {
+            var entitiesGraphicsSystem = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<EntitiesGraphicsSystem>();
+            if (!m_MaterialMapping.ContainsKey(material))
+            {
+                m_MaterialMapping.Add(material, entitiesGraphicsSystem.RegisterMaterial(material));
+            }
+            return m_MaterialMapping[material];
         }
     }
 }
