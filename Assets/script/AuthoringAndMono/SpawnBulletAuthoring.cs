@@ -18,7 +18,7 @@ namespace Assets.script.AuthoringAndMono
             Entity SpawnEntity = GetEntity(TransformUsageFlags.Dynamic);
             AddComponent(SpawnEntity, new ComponentsAndTags.SpawnBullet
             {
-                BulletPrefab = GetEntity(authoring.BulletPrefab),
+                BulletPrefab = GetEntity(authoring.BulletPrefab, TransformUsageFlags.Dynamic),
                 lastSpawnTime = authoring.spawnSpeed,
                 spawnSpeed = authoring.spawnSpeed,
             });

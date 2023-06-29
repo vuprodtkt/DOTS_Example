@@ -6,13 +6,17 @@ using Unity.Entities;
 [BurstCompile]
 public partial struct DestroySystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-    
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (destroyComponent, entity) in SystemAPI.Query<RefRW<DestroyComponent>>().WithEntityAccess())
@@ -30,10 +34,5 @@ public partial struct DestroySystem : ISystem
         }
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
     }
 }

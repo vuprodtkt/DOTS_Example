@@ -8,13 +8,17 @@ using UnityEngine;
 [BurstCompile]
 public partial struct SpawnBulletSystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         //spawn bullet
         var isPress = Input.GetKey(KeyCode.Space);
         foreach (var (localToWorldComponent, BulletSpawnComponent) in SystemAPI.Query<RefRO<LocalToWorld>, RefRW<SpawnBullet>>().WithAll<PlayerCannon>())
@@ -38,10 +42,5 @@ public partial struct SpawnBulletSystem : ISystem
                 }
             }
         }
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
     }
 }

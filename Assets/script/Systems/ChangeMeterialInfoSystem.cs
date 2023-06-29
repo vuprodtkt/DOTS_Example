@@ -12,24 +12,39 @@ public partial struct ChangeMaterialInfoSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
-        //spawn enemy
-        foreach (var(materialMeshInfo, materialMeshInfoChange, tfComponent, physicsColliderComponent, entity) 
-            in SystemAPI.Query<RefRW<MaterialMeshInfo> ,RefRO<MaterialMeshInfoChange>, RefRW<LocalTransform>, RefRW<PhysicsCollider>>()
-                .WithAll<EnemyComponent>()
-                .WithEntityAccess())
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
         {
-            materialMeshInfo.ValueRW.MaterialID = materialMeshInfoChange.ValueRO.materialID;
-            materialMeshInfo.ValueRW.MeshID = materialMeshInfoChange.ValueRO.meshID;
-
-            tfComponent.ValueRW.Rotation = quaternion.LookRotation(new float3(0, 1, 0), new float3(-1, 0, 0));
-            tfComponent.ValueRW.Position.x += 1;
-
-            ecb.RemoveComponent<MaterialMeshInfoChange>(entity);
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
         }
 
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        //spawn enemy
+        new ChangeMaterialMeshJob { ECB = ecb }.Schedule();
+        state.Dependency.Complete();
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
 
+    }
+}
+
+[BurstCompile]
+public partial struct ChangeMaterialMeshJob : IJobEntity
+{
+    public EntityCommandBuffer ECB;
+
+    void Execute(RefRW<MaterialMeshInfo> materialMeshInfo, RefRO<MaterialMeshInfoChange> materialMeshInfoChange
+                , RefRW<LocalTransform> tfComponent, RefRW<PhysicsCollider> physicsColliderComponent
+                , RefRO<EnemyComponent> enemyComponent, Entity e)
+    {
+        materialMeshInfo.ValueRW.MaterialID = materialMeshInfoChange.ValueRO.materialID;
+        materialMeshInfo.ValueRW.MeshID = materialMeshInfoChange.ValueRO.meshID;
+
+        tfComponent.ValueRW.Rotation = quaternion.LookRotation(new float3(0, 1, 0), new float3(-1, 0, 0));
+        tfComponent.ValueRW.Position.x += 1;
+
+        ECB.RemoveComponent<MaterialMeshInfoChange>(e);
     }
 }

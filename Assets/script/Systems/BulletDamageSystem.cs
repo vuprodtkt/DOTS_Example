@@ -16,6 +16,14 @@ public partial struct BulletDamageSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (bulletDamageComponent, entity) in SystemAPI.Query<RefRW<BulletDamageComponent>>().WithEntityAccess())
@@ -32,10 +40,5 @@ public partial struct BulletDamageSystem : ISystem
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
     }
 }

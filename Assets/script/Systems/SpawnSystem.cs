@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 [BurstCompile]
 public partial struct SpawnSystem : ISystem
@@ -44,7 +43,6 @@ public partial struct SpawnSystem : ISystem
                         Position = spawnPlayerComponent.ValueRO.position
                         ,Rotation = quaternion.LookRotation(new float3(1, 0, 0), new float3(0, -1, 0))
                         ,Scale = (float)30
-                        
                     });
                 spawnPlayerComponent.ValueRW.isSpawn = true;
             }
@@ -55,6 +53,7 @@ public partial struct SpawnSystem : ISystem
     }
 }
 
+[BurstCompile]
 public partial struct EnemySpawnJob : IJobEntity
 {
     public EntityCommandBuffer ECB;
@@ -76,6 +75,10 @@ public partial struct EnemySpawnJob : IJobEntity
                         , levelComponent.ValueRO.currentLevel % 2 == 0 ? ConfigComponent.enemy1Prefab : ConfigComponent.enemy2Prefab);
             }
             levelComponent.ValueRW.nextLevel++;
+        }
+        if(levelComponent.ValueRO.maxLevel != ConfigComponent.maxLevel)
+        {
+            levelComponent.ValueRW.maxLevel = ConfigComponent.maxLevel;
         }
     }
 

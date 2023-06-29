@@ -8,13 +8,17 @@ using Unity.Transforms;
 [BurstCompile]
 public partial struct EnemyMoveSystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
         //move enemy
         new EnemyMoveJob { ECB = ecb, deltaTime = SystemAPI.Time.DeltaTime }.Schedule();
@@ -23,13 +27,9 @@ public partial struct EnemyMoveSystem : ISystem
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
-    }
 }
 
+[BurstCompile]
 public partial struct EnemyMoveJob : IJobEntity
 {
     public EntityCommandBuffer ECB;

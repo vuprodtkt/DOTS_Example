@@ -1,5 +1,4 @@
 ﻿using Assets.script.ComponentsAndTags;
-using Assets.script.Systems;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
@@ -11,12 +10,24 @@ public partial struct TargetDamagedSystem : ISystem
     {
         state.RequireForUpdate<TargetDamagedComponent>();
     }
-    
+
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
 
-        foreach (var (targetDamagedComponent, healthComponent ,entity) in SystemAPI.Query<RefRW<TargetDamagedComponent>, RefRW<HealthComponent>>().WithEntityAccess())
+        foreach (var (targetDamagedComponent, healthComponent ,entity) 
+            in SystemAPI.Query<RefRW<TargetDamagedComponent>, RefRW<HealthComponent>>()
+            .WithAll<EnemyComponent>()
+            .WithEntityAccess())
         {
             healthComponent.ValueRW.health -= targetDamagedComponent.ValueRO.damaged;
             ecb.RemoveComponent<TargetDamagedComponent>(entity);
@@ -27,12 +38,17 @@ public partial struct TargetDamagedSystem : ISystem
                 ecb.AddComponent<DestroyComponent>(entity);
             }
         }
+
+        foreach (var (targetDamagedComponent, healthComponent, entity) 
+            in SystemAPI.Query<RefRW<TargetDamagedComponent>, RefRW<HealthComponent>>()
+            .WithAll<PlayerComponent>()
+            .WithEntityAccess())
+        {
+            healthComponent.ValueRW.health -= targetDamagedComponent.ValueRO.damaged;
+            ecb.RemoveComponent<TargetDamagedComponent>(entity);
+        }
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
 
-    public void OnDestroy(ref SystemState state)
-    {
-
-    }
 }

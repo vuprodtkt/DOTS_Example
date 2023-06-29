@@ -1,5 +1,4 @@
 ﻿using Assets.script.ComponentsAndTags;
-using Assets.script.Systems;
 using System;
 using Unity.Burst;
 using Unity.Collections;
@@ -10,8 +9,17 @@ public partial class CalculatorScoreSystemBase : SystemBase
 {
     public Action<int> onCalculatorScore;
 
+    [BurstCompile]
     protected override void OnUpdate()
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         var ecb = new EntityCommandBuffer(Allocator.Temp);
 
         foreach (var (addScoreComponent, entity) in SystemAPI.Query<RefRO<AddScoreComponent>>().WithEntityAccess())

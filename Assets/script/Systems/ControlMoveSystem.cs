@@ -1,6 +1,5 @@
 ﻿using Assets.script.ComponentsAndTags;
 using Unity.Burst;
-using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -9,13 +8,17 @@ using UnityEngine;
 [BurstCompile]
 public partial struct ControlMoveSystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
+            }
+        }
+
         // Move Player
         float horizontalInput = Input.GetAxis("Horizontal");
         float VerticalInput = Input.GetAxis("Vertical");
@@ -24,11 +27,6 @@ public partial struct ControlMoveSystem : ISystem
             horizontalInput = horizontalInput, 
             verticalInput = VerticalInput 
         }.ScheduleParallel();
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
     }
 }
 

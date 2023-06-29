@@ -9,11 +9,6 @@ using UnityEngine;
 [BurstCompile]
 public partial struct BulletMoveSystem : ISystem
 {
-    public void OnCreate(ref SystemState state)
-    {
-
-    }
-
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
@@ -29,11 +24,6 @@ public partial struct BulletMoveSystem : ISystem
         new BulletMoveJob { 
             deltaTime = SystemAPI.Time.DeltaTime 
         }.ScheduleParallel();
-    }
-
-    public void OnDestroy(ref SystemState state)
-    {
-
     }
 }
 

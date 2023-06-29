@@ -3,7 +3,6 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
-using UnityEngine;
 
 namespace Assets.script.Systems
 {
@@ -127,7 +126,17 @@ namespace Assets.script.Systems
             }
         }
 
+        [BurstCompile]
         public void OnUpdate(ref SystemState state) {
+
+            foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+            {
+                if (stateGanmecomponent.ValueRO.state != 1)
+                {
+                    return;
+                }
+            }
+
             EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
             state.Dependency = new JobCheckCollide
             {
