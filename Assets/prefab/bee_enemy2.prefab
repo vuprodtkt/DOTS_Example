@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8726282264677253803}
   - component: {fileID: 8723302245712061917}
   - component: {fileID: 7168246625922549197}
+  - component: {fileID: 8131090154407811992}
   m_Layer: 0
   m_Name: bee_enemy2
   m_TagString: Untagged
@@ -119,7 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a15d3243b1ac37419ac7cee5f0b95b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 200
+  health: 400
 --- !u!23 &8723302245712061917
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -170,3 +171,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5956208386214000765}
   m_Mesh: {fileID: 4300002, guid: 882656347ff33c34c97eba01dccf0b5d, type: 3}
+--- !u!114 &8131090154407811992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5956208386214000765}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b08fc0fa05b4704fb5e135ee98c635b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BulletPrefab: {fileID: 2919361981448645722, guid: 3d09024a09787894aabafac08c9ade34,
+    type: 3}
+  spawnSpeed: 3
+  direction:
+    x: 0
+    y: -1
+    z: 0

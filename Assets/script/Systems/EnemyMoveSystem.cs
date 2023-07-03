@@ -69,7 +69,7 @@ public partial struct EnemyMoveJob : IJobEntity
         if (tfComponent.ValueRO.Position.y <= moveRangeComponent.ValueRO.minVertical)
         {
             //game over
-            tfComponent.ValueRW.Position.y = moveRangeComponent.ValueRO.maxVertical;
+            //tfComponent.ValueRW.Position.y = moveRangeComponent.ValueRO.maxVertical;
 
         }
     }

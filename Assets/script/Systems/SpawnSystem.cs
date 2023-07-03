@@ -42,7 +42,7 @@ public partial struct SpawnSystem : ISystem
                     {
                         Position = spawnPlayerComponent.ValueRO.position
                         ,Rotation = quaternion.LookRotation(new float3(1, 0, 0), new float3(0, -1, 0))
-                        ,Scale = (float)30
+                        ,Scale = (float)1
                     });
                 spawnPlayerComponent.ValueRW.isSpawn = true;
             }

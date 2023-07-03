@@ -27,7 +27,6 @@ public partial class LevelSystem : SystemBase
                 levelComponent.ValueRW.currentLevel = levelComponent.ValueRO.nextLevel;
                 onLevel?.Invoke(levelComponent.ValueRW.currentLevel);
             }
-            
         }
     }
 }

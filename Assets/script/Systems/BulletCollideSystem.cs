@@ -15,6 +15,7 @@ namespace Assets.script.Systems
         {
             state.RequireForUpdate<EnemyComponent>();
             state.RequireForUpdate<BulletComponent>();
+            state.RequireForUpdate<PlayerComponent>();
             state.RequireForUpdate<SimulationSingleton>();
 
         }
@@ -24,6 +25,7 @@ namespace Assets.script.Systems
         {
             public ComponentLookup<EnemyComponent> enemyLookup;
             public ComponentLookup<BulletComponent> bulletLookup;
+            public ComponentLookup<PlayerComponent> playerLookup;
             public EntityCommandBuffer ecb;
 
             private bool IsEnemy(Entity e)
@@ -36,31 +38,43 @@ namespace Assets.script.Systems
                 return bulletLookup.HasComponent(e);
             }
 
+            private bool IsPlayer(Entity e)
+            {
+                return playerLookup.HasComponent(e);
+            }
+
             public void Execute(TriggerEvent triggerEvent)
             {
                 var isEnemyA = IsEnemy(triggerEvent.EntityA);
                 var isBulletA = IsBullet(triggerEvent.EntityA);
+                var isPlayerA = IsPlayer(triggerEvent.EntityA);
 
                 var isEnemyB = IsEnemy(triggerEvent.EntityB);
                 var isBulletB = IsBullet(triggerEvent.EntityB);
+                var isPlayerB = IsPlayer(triggerEvent.EntityB);
 
-                var validA = (isEnemyA != isBulletA);
-                if (!validA)
+                if(isBulletA == isBulletB)
                 {
                     return;
                 }
 
-                var validB = (isEnemyB != isBulletB);
-                if (!validB)
-                {
-                    return;
-                }
+                //var validA = (isEnemyA != isBulletA);
+                //if (!validA)
+                //{
+                //    return;
+                //}
 
-                var v = (isEnemyA == isBulletB) || (isBulletA == isEnemyB);
-                if (!v)
-                {
-                    return;
-                }
+                //var validB = (isEnemyB != isBulletB);
+                //if (!validB)
+                //{
+                //    return;
+                //}
+
+                //var v = (isEnemyA == isBulletB) || (isBulletA == isEnemyB);
+                //if (!v)
+                //{
+                //    return;
+                //}
 
 
                 ////addtag(hitted)
@@ -143,6 +157,7 @@ namespace Assets.script.Systems
                 ecb = ecb,
                 enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(),
                 bulletLookup = SystemAPI.GetComponentLookup<BulletComponent>(),
+                playerLookup = SystemAPI.GetComponentLookup<PlayerComponent>(),
             }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
 
             state.Dependency.Complete();

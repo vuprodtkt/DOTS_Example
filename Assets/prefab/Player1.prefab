@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 3403793728231011865}
   - component: {fileID: 8835198552501542607}
   - component: {fileID: 3482778629137863483}
+  - component: {fileID: 9006997575557658228}
+  - component: {fileID: 4595212106110166739}
   m_Layer: 0
   m_Name: Player1
   m_TagString: Untagged
@@ -118,6 +120,56 @@ MonoBehaviour:
   maxHorizontal: 15
   minVertical: -9
   maxVertical: 9
+--- !u!54 &9006997575557658228
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957711310374170602}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!136 &4595212106110166739
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957711310374170602}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.01
+  m_Height: 0.06
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.005, z: 0}
 --- !u!1 &4102756150954046100
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,6 +217,10 @@ MonoBehaviour:
   BulletPrefab: {fileID: 5576860105699265102, guid: 7d6c8a0c39caa3e4d88f52e10b711486,
     type: 3}
   spawnSpeed: 0.1
+  direction:
+    x: 0
+    y: 1
+    z: 0
 --- !u!1 &6405433990361274392
 GameObject:
   m_ObjectHideFlags: 0
@@ -212,6 +268,10 @@ MonoBehaviour:
   BulletPrefab: {fileID: 5576860105699265102, guid: 7d6c8a0c39caa3e4d88f52e10b711486,
     type: 3}
   spawnSpeed: 0.1
+  direction:
+    x: 0
+    y: 1
+    z: 0
 --- !u!1 &6511763949873873339
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,10 +31,21 @@ public partial struct BulletDamageSystem : ISystem
             var bulletEntity = bulletDamageComponent.ValueRW.bullet;
             var targetEntity = bulletDamageComponent.ValueRW.target;
 
-            BulletDamage damgeComponet = state.EntityManager.GetComponentData<BulletDamage>(bulletEntity);
-            ecb.AddComponent(targetEntity, new TargetDamagedComponent { damaged = damgeComponet.damage });
+            BulletComponent bulletComponent = state.EntityManager.GetComponentData<BulletComponent>(bulletEntity);
+            ComponentLookup<EnemyComponent> enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>();
+            ComponentLookup<PlayerComponent> PlayerLookup = SystemAPI.GetComponentLookup<PlayerComponent>();
 
-            ecb.DestroyEntity(bulletEntity);
+            BulletDamage damgeComponet = state.EntityManager.GetComponentData<BulletDamage>(bulletEntity);
+
+            if (
+                (bulletComponent.bulletOfPlayer && enemyLookup.HasComponent(targetEntity))
+                || (!bulletComponent.bulletOfPlayer && PlayerLookup.HasComponent(targetEntity))
+                )
+            {
+                ecb.AddComponent(targetEntity, new TargetDamagedComponent { damaged = damgeComponet.damage });
+                ecb.DestroyEntity(bulletEntity);
+            }
+
             ecb.DestroyEntity(entity);
         }
 

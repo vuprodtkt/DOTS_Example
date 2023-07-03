@@ -14,6 +14,7 @@ namespace Assets.script.AuthoringAndMono
         public Text m_text_pauseGame;
         public GameObject m_game_state;
         public GameObject m_background_pauseGame;
+        public Slider m_healthBar_slider;
 
         private int init_score = 0;
         private int init_level = 0;
@@ -61,6 +62,9 @@ namespace Assets.script.AuthoringAndMono
 
             var endGameSystem = _world.GetExistingSystemManaged<EndGameSystem>();
             endGameSystem.onEndGame += onEndGame;
+
+            var healthBarUISystem = _world.GetExistingSystemManaged<HealthBarUISystem>();
+            healthBarUISystem.onDisplayHealthBar += onDisplayHealthBar;
         }
 
         void SetupUIGamePlay()
@@ -72,6 +76,7 @@ namespace Assets.script.AuthoringAndMono
 
             m_text_score.text = "Score: " + init_score;
             m_text_level.text = "Level: " + init_level;
+            m_healthBar_slider.value = 100;
         }
 
         private void onScore(int score)
@@ -82,6 +87,11 @@ namespace Assets.script.AuthoringAndMono
         private void onLevel(int level)
         {
             m_text_level.text = "Level: " + level;
+        }
+
+        private void onDisplayHealthBar(int health)
+        {
+            m_healthBar_slider.value = health;
         }
 
         private void onEndGame(bool isWin)
@@ -104,7 +114,7 @@ namespace Assets.script.AuthoringAndMono
             stateGame = 1;
             EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateGame });
-        }
+        }   
 
         public void OnClickPauseGame()
         {

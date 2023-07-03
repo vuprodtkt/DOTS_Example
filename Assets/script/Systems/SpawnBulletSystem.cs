@@ -1,5 +1,6 @@
 using Assets.script.ComponentsAndTags;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -19,9 +20,11 @@ public partial struct SpawnBulletSystem : ISystem
             }
         }
 
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
         //spawn bullet
         var isPress = Input.GetKey(KeyCode.Space);
-        foreach (var (localToWorldComponent, BulletSpawnComponent) in SystemAPI.Query<RefRO<LocalToWorld>, RefRW<SpawnBullet>>().WithAll<PlayerCannon>())
+        foreach (var (localToWorldComponent, BulletSpawnComponent) in SystemAPI.Query<RefRO<LocalToWorld>, RefRW<SpawnBullet>>().WithNone<EnemyComponent>())
         {
             if(!isPress)
             {
@@ -31,9 +34,23 @@ public partial struct SpawnBulletSystem : ISystem
             {
                 if (BulletSpawnComponent.ValueRO.lastSpawnTime <= 0)
                 {
-                    var bulletEntity = state.EntityManager.Instantiate(BulletSpawnComponent.ValueRO.BulletPrefab);
-                    state.EntityManager.SetComponentData(bulletEntity, 
-                        new LocalTransform { Position = localToWorldComponent.ValueRO.Position, Scale = 1f, Rotation = quaternion.identity });
+                    var bulletEntity = ecb.Instantiate(BulletSpawnComponent.ValueRO.BulletPrefab);
+                    ecb.SetComponent(bulletEntity, 
+                        new LocalTransform { 
+                            Position = localToWorldComponent.ValueRO.Position, 
+                            Scale = 1f, 
+                            Rotation = quaternion.identity 
+                        });
+                    ecb.AddComponent(bulletEntity,
+                        new BulletDirection
+                        {
+                            direction = BulletSpawnComponent.ValueRO.direction_bullet,
+                        });
+                    ecb.AddComponent(bulletEntity,
+                        new BulletComponent
+                        {
+                            bulletOfPlayer = true,
+                        });
                     BulletSpawnComponent.ValueRW.lastSpawnTime = BulletSpawnComponent.ValueRO.spawnSpeed;
                 }
                 else
@@ -42,5 +59,40 @@ public partial struct SpawnBulletSystem : ISystem
                 }
             }
         }
+
+
+        foreach (var (localToWorldComponent, BulletSpawnComponent) in SystemAPI.Query<RefRO<LocalToWorld>, RefRW<SpawnBullet>>().WithAll<EnemyComponent>())
+        {
+            if (BulletSpawnComponent.ValueRO.lastSpawnTime >= BulletSpawnComponent.ValueRO.spawnSpeed)
+            {
+                var position = new float3(1f, localToWorldComponent.ValueRO.Position.y, localToWorldComponent.ValueRO.Position.z);
+                var bulletEntity = ecb.Instantiate(BulletSpawnComponent.ValueRO.BulletPrefab);
+                ecb.SetComponent(bulletEntity,
+                    new LocalTransform
+                    {
+                        Position = position,
+                        Scale = 1f,
+                        Rotation = quaternion.identity
+                    });
+                ecb.AddComponent(bulletEntity,
+                    new BulletDirection
+                    {
+                        direction = BulletSpawnComponent.ValueRO.direction_bullet,
+                    });
+                ecb.AddComponent(bulletEntity,
+                    new BulletComponent
+                    {
+                        bulletOfPlayer = false,
+                    });
+                BulletSpawnComponent.ValueRW.lastSpawnTime = 0f;
+            }
+            else
+            {
+                BulletSpawnComponent.ValueRW.lastSpawnTime += SystemAPI.Time.DeltaTime;
+            }
+        }
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }

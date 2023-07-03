@@ -25,10 +25,10 @@ namespace Assets.script.AuthoringAndMono
             {
                 range = authoring.maxRange,
             });
-            AddComponent(Entity, new ComponentsAndTags.BulletComponent
-            {
+            //AddComponent(Entity, new ComponentsAndTags.BulletComponent
+            //{
             
-            });
+            //});
             AddComponent(Entity, new ComponentsAndTags.BulletDamage
             {
                 damage = authoring.damage,

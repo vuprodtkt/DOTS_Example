@@ -9,6 +9,7 @@ namespace Assets.script.AuthoringAndMono
     {
         public GameObject BulletPrefab;
         public float spawnSpeed = 0.1f;
+        public float3 direction;
     }
 
     public class SpawnBulletBake : Baker<SpawnBulletAuthoring>
@@ -21,9 +22,8 @@ namespace Assets.script.AuthoringAndMono
                 BulletPrefab = GetEntity(authoring.BulletPrefab, TransformUsageFlags.Dynamic),
                 lastSpawnTime = authoring.spawnSpeed,
                 spawnSpeed = authoring.spawnSpeed,
+                direction_bullet = authoring.direction,
             });
-
-            AddComponent(SpawnEntity, new ComponentsAndTags.PlayerCannon {});
         }
     }
 }

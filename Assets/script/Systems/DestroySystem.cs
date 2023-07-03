@@ -4,6 +4,8 @@ using Unity.Collections;
 using Unity.Entities;
 
 [BurstCompile]
+[UpdateInGroup(typeof(LateSimulationSystemGroup))]
+[UpdateAfter(typeof(StateGameComponent))]
 public partial struct DestroySystem : ISystem
 {
     [BurstCompile]
@@ -32,6 +34,7 @@ public partial struct DestroySystem : ISystem
                 ecb.DestroyEntity(entity);
             }
         }
+
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
