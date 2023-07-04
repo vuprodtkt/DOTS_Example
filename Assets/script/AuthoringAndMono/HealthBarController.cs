@@ -22,7 +22,7 @@ namespace Assets.script.AuthoringAndMono
         {
             var stateGameComponent = entityManager.CreateEntityQuery(typeof(StateGameComponent))
                                                         .GetSingleton<StateGameComponent>();
-            if(stateGameComponent.state == 0)
+            if(stateGameComponent.state != 1 && stateGameComponent.state != 3 && stateGameComponent.state != 4)
             {
                 return;
             }

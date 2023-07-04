@@ -10,6 +10,7 @@ public partial struct StateGameSystem : ISystem
 {
     public void OnUpdate(ref SystemState state)
     {
+        
 
         foreach (var (tfComponent, moveRangeComponent)
             in SystemAPI.Query<RefRW<LocalTransform>, RefRW<EnemyRange>>().WithAll<EnemyComponent>())
@@ -53,7 +54,7 @@ public partial struct StateGameSystem : ISystem
                 }
             }
         }
-
+        
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

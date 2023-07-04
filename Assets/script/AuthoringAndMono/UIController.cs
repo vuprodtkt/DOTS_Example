@@ -1,7 +1,6 @@
 ﻿using Assets.script.ComponentsAndTags;
 using CortexDeveloper.ECSMessages.Service;
 using Unity.Entities;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,9 +9,11 @@ namespace Assets.script.AuthoringAndMono
     public class UIController : MonoBehaviour
     {
         public Canvas m_UI_canvas;
-        public Text m_text_pauseGame;
+        public GameObject m_pauseGame_button;
         public GameObject m_game_state;
         public GameObject m_background_pauseGame;
+        public GameObject m_restart_button;
+        public GameObject m_home_button;
 
         // 0: menu game
         // 1: game loop
@@ -81,20 +82,42 @@ namespace Assets.script.AuthoringAndMono
                 case 0:
                     break;
                 case 1:
-                    m_text_pauseGame.text = "Pause";
+                    m_pauseGame_button.GetComponentInChildren<Text>().text = "Pause";
+
                     m_background_pauseGame.SetActive(false);
+                    m_pauseGame_button.SetActive(true);
+
+                    m_game_state.SetActive(false);
+                    m_restart_button.SetActive(false);
+                    m_home_button.SetActive(false);
                     break;
                 case 2:
-                    m_text_pauseGame.text = "Start";
+                    m_pauseGame_button.GetComponentInChildren<Text>().text = "Start";
+
                     m_background_pauseGame.SetActive(true);
+                    m_pauseGame_button.SetActive(true);
+
+                    m_game_state.SetActive(false);
+                    m_restart_button.SetActive(false);
+                    m_home_button.SetActive(false);
                     break;
                 case 3:
                     m_game_state.GetComponent<Text>().text = "GameOver!";
+
                     m_game_state.SetActive(true);
+                    m_restart_button.SetActive(true);
+                    m_home_button.SetActive(true);
+
+                    m_pauseGame_button.SetActive(false);
                     break;
                 case 4:
                     m_game_state.GetComponent<Text>().text = "You win!";
+
                     m_game_state.SetActive(true);
+                    m_restart_button.SetActive(true);
+                    m_home_button.SetActive(true);
+
+                    m_pauseGame_button.SetActive(false);
                     break;
             }
         }
@@ -104,7 +127,21 @@ namespace Assets.script.AuthoringAndMono
             stateGame = 1;
             EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
             MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateGame });
-        }   
+        }
+
+        public void onClickRestartGame()
+        {
+            stateGame = 5;
+            EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateGame });
+        }
+
+        public void onClickHome()
+        {
+            stateGame = 0;
+            EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
+            MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateGame });
+        }
 
         public void OnClickPauseGame()
         {
