@@ -1,13 +1,12 @@
 ﻿using Assets.script.ComponentsAndTags;
-using System;
 using Unity.Burst;
 using Unity.Entities;
 
 [BurstCompile]
-public partial class LevelSystem : SystemBase
+public partial struct LevelSystem : ISystem
 {
-    public Action<int> onLevel;
-    protected override void OnUpdate()
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
         {
@@ -25,7 +24,6 @@ public partial class LevelSystem : SystemBase
             if(levelComponent.ValueRO.currentLevel < levelComponent.ValueRO.maxLevel)
             {
                 levelComponent.ValueRW.currentLevel = levelComponent.ValueRO.nextLevel;
-                onLevel?.Invoke(levelComponent.ValueRW.currentLevel);
             }
         }
     }

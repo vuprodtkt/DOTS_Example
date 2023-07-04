@@ -5,7 +5,7 @@ using Unity.Entities;
 
 [BurstCompile]
 [UpdateInGroup(typeof(LateSimulationSystemGroup))]
-[UpdateAfter(typeof(StateGameComponent))]
+//[UpdateAfter(typeof(StateGameComponent))]
 public partial struct DestroySystem : ISystem
 {
     [BurstCompile]

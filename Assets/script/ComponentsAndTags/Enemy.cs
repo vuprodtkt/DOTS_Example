@@ -38,4 +38,15 @@ namespace Assets.script.ComponentsAndTags
         public float minVertical;
         public float maxVertical;
     }
+
+    public partial struct EnemyCollideDamageComponent: IComponentData
+    {
+        public Entity enemy;
+        public Entity target;
+    }
+
+    public partial struct EnemyDamage : IComponentData
+    {
+        public float damage;
+    }
 }

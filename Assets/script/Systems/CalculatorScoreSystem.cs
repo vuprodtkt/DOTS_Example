@@ -1,16 +1,14 @@
 ﻿using Assets.script.ComponentsAndTags;
-using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
 [BurstCompile]
-public partial class CalculatorScoreSystemBase : SystemBase
+public partial struct CalculatorScoreSystem : ISystem
 {
-    public Action<int> onCalculatorScore;
 
     [BurstCompile]
-    protected override void OnUpdate()
+    public void OnUpdate(ref SystemState state)
     {
         foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
         {
@@ -26,14 +24,12 @@ public partial class CalculatorScoreSystemBase : SystemBase
         {
             foreach (var scoreComponent in SystemAPI.Query<RefRW<ScoreComponent>>())
             {
-                scoreComponent.ValueRW.score += 5;
-                onCalculatorScore?.Invoke(scoreComponent.ValueRO.score);
+                scoreComponent.ValueRW.score += addScoreComponent.ValueRO.score;
             }
-                
             ecb.DestroyEntity(entity);
         }
 
-        ecb.Playback(EntityManager);
+        ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }
 }

@@ -12,12 +12,10 @@ public partial struct BulletMoveSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        var stateGameComponent = SystemAPI.GetSingleton<StateGameComponent>();
+        if(stateGameComponent.state != 1)
         {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+            return;
         }
 
         //move bullet

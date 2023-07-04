@@ -1,6 +1,7 @@
 ﻿using Assets.script.ComponentsAndTags;
 using CortexDeveloper.ECSMessages.Service;
 using Unity.Entities;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,15 +10,15 @@ namespace Assets.script.AuthoringAndMono
     public class UIController : MonoBehaviour
     {
         public Canvas m_UI_canvas;
-        public Text m_text_score;
-        public Text m_text_level;
         public Text m_text_pauseGame;
         public GameObject m_game_state;
         public GameObject m_background_pauseGame;
-        public Slider m_healthBar_slider;
 
-        private int init_score = 0;
-        private int init_level = 0;
+        // 0: menu game
+        // 1: game loop
+        // 2: pause game
+        // 3: game over
+        // 4: win game
         private int stateGame;
 
         private static World _world;
@@ -54,17 +55,13 @@ namespace Assets.script.AuthoringAndMono
         // Update is called once per frame
         void Update()
         {
-            var CalculatorScoreSystem = _world.GetExistingSystemManaged<CalculatorScoreSystemBase>();
-            CalculatorScoreSystem.onCalculatorScore += onScore;
-
-            var LevelSystem = _world.GetExistingSystemManaged<LevelSystem>();
-            LevelSystem.onLevel += onLevel;
-
-            var endGameSystem = _world.GetExistingSystemManaged<EndGameSystem>();
-            endGameSystem.onEndGame += onEndGame;
-
-            var healthBarUISystem = _world.GetExistingSystemManaged<HealthBarUISystem>();
-            healthBarUISystem.onDisplayHealthBar += onDisplayHealthBar;
+            if(stateGame == 0)
+            {
+                return;
+            }
+            var stateGameComponent = _world.EntityManager.CreateEntityQuery(typeof(StateGameComponent))
+                                                        .GetSingleton<StateGameComponent>();
+            onStateGame(stateGameComponent.state);
         }
 
         void SetupUIGamePlay()
@@ -74,39 +71,32 @@ namespace Assets.script.AuthoringAndMono
             m_UI_canvas.pixelPerfect = true;
             m_UI_canvas.scaleFactor = 1.0f;
 
-            m_text_score.text = "Score: " + init_score;
-            m_text_level.text = "Level: " + init_level;
-            m_healthBar_slider.value = 100;
         }
 
-        private void onScore(int score)
+        private void onStateGame(int state)
         {
-            m_text_score.text = "Score: " + score;
-        }
-
-        private void onLevel(int level)
-        {
-            m_text_level.text = "Level: " + level;
-        }
-
-        private void onDisplayHealthBar(int health)
-        {
-            m_healthBar_slider.value = health;
-        }
-
-        private void onEndGame(bool isWin)
-        {
-            if (isWin)
+            stateGame = state != 0 ? state : stateGame;
+            switch (state)
             {
-                m_game_state.GetComponent<Text>().text = "You win!";
-                m_game_state.SetActive(true);
+                case 0:
+                    break;
+                case 1:
+                    m_text_pauseGame.text = "Pause";
+                    m_background_pauseGame.SetActive(false);
+                    break;
+                case 2:
+                    m_text_pauseGame.text = "Start";
+                    m_background_pauseGame.SetActive(true);
+                    break;
+                case 3:
+                    m_game_state.GetComponent<Text>().text = "GameOver!";
+                    m_game_state.SetActive(true);
+                    break;
+                case 4:
+                    m_game_state.GetComponent<Text>().text = "You win!";
+                    m_game_state.SetActive(true);
+                    break;
             }
-            else
-            {
-                m_game_state.GetComponent<Text>().text = "GameOver!";
-                m_game_state.SetActive(true);
-            }
-            
         }
 
         public void OnClickStartGame()
@@ -118,21 +108,21 @@ namespace Assets.script.AuthoringAndMono
 
         public void OnClickPauseGame()
         {
+            var stateMessage = 2;
             if(stateGame == 1)
             {
-                stateGame = 2;
-                m_text_pauseGame.text = "Start";
-                m_background_pauseGame.SetActive(true);
-            }
-            else if(stateGame == 2)
+                stateMessage = 2;
+            }else if(stateGame == 2)
             {
-                stateGame = 1;
-                m_text_pauseGame.text = "Pause";
-                m_background_pauseGame.SetActive(false);
+                stateMessage = 1;
             }
-            
+            else
+            {
+                return;
+            }
+
             EntityManager entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
-            MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateGame });
+            MessageBroadcaster.PrepareMessage().AliveForOneFrame().PostImmediate(entityManager, new StateGameMessage { state = stateMessage });
         }
 
         private void OnDestroy()

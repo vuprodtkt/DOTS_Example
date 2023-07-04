@@ -106,6 +106,7 @@ MonoBehaviour:
   maxHorizontal: 15
   minVertical: -9
   maxVertical: 9
+  damage: 20
   finalMeshEnemy: {fileID: 4300002, guid: 22e81efa6a0063d4f898e0820a22d0ef, type: 3}
   finalMaterialEnemy: {fileID: 2100000, guid: d49749f343f41f1449e7b5508795ab52, type: 2}
 --- !u!114 &8726282264677253803

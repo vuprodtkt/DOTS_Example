@@ -15,6 +15,7 @@ namespace Assets.script.AuthoringAndMono
         public float maxHorizontal = 15;
         public float minVertical = -9;
         public float maxVertical = 9;
+        public float damage = 10f;
 
         public Mesh finalMeshEnemy;
         public Material finalMaterialEnemy;
@@ -47,6 +48,10 @@ namespace Assets.script.AuthoringAndMono
                 state = 0,
                 final_meshID = registerMesh(authoring.finalMeshEnemy),
                 final_materialID = registerMaterial(authoring.finalMaterialEnemy),
+            });
+            AddComponent(Entity, new ComponentsAndTags.EnemyDamage
+            {
+                damage = authoring.damage,
             });
         }
 
