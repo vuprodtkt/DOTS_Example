@@ -11,12 +11,10 @@ public partial struct EnemyMoveSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        var StateGameSingleton = SystemAPI.GetSingleton<StateGameComponent>();
+        if (StateGameSingleton.state != 1)
         {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+            return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
@@ -65,12 +63,6 @@ public partial struct EnemyMoveJob : IJobEntity
         {
             tfComponent.ValueRW.Position.y--;
             moveComponent.ValueRW.timeMoveVertical = 0f;
-        }
-        if (tfComponent.ValueRO.Position.y <= moveRangeComponent.ValueRO.minVertical)
-        {
-            //game over
-            //tfComponent.ValueRW.Position.y = moveRangeComponent.ValueRO.maxVertical;
-
         }
     }
 }

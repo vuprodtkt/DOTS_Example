@@ -5,7 +5,6 @@ using Unity.Entities;
 
 [BurstCompile]
 [UpdateInGroup(typeof(LateSimulationSystemGroup))]
-//[UpdateAfter(typeof(StateGameComponent))]
 public partial struct DestroySystem : ISystem
 {
     [BurstCompile]
@@ -19,23 +18,36 @@ public partial struct DestroySystem : ISystem
             }
         }
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (destroyComponent, entity) in SystemAPI.Query<RefRW<DestroyComponent>>().WithEntityAccess())
-        {
-            ecb.DestroyEntity(entity);
-        }
+        new DestroyJob { ECB = ecb }.Schedule();
+        new BulletRangeJob { ECB = ecb }.Schedule();
 
-        //destroy bullet out of range
-        foreach (var (rangeComponent, entity) in SystemAPI.Query<RefRW<BulletRange>>().WithEntityAccess())
-        {
-            if (rangeComponent.ValueRO.range <= 0)
-            {
-                ecb.DestroyEntity(entity);
-            }
-        }
-
+        state.Dependency.Complete();
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+}
+
+[BurstCompile]
+public partial struct BulletRangeJob : IJobEntity
+{
+    public EntityCommandBuffer ECB;
+    void Execute(RefRO<BulletRange> rangeComponent, Entity entity)
+    {
+        if (rangeComponent.ValueRO.range <= 0)
+        {
+            ECB.DestroyEntity(entity);
+        }
+    }
+}
+
+[BurstCompile]
+public partial struct DestroyJob : IJobEntity
+{
+    public EntityCommandBuffer ECB;
+    void Execute(RefRO<DestroyComponent> destroyComponent, Entity entity)
+    {
+        ECB.DestroyEntity(entity);
     }
 }

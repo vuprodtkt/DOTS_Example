@@ -9,7 +9,6 @@ using UnityEngine;
 [BurstCompile]
 public partial struct BulletMoveSystem : ISystem
 {
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         var stateGameComponent = SystemAPI.GetSingleton<StateGameComponent>();

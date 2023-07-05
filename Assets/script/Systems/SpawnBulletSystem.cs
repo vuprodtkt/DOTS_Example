@@ -9,18 +9,16 @@ using UnityEngine;
 [BurstCompile]
 public partial struct SpawnBulletSystem : ISystem
 {
-    [BurstCompile]
+
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        var StateGameSingleton = SystemAPI.GetSingleton<StateGameComponent>();
+        if (StateGameSingleton.state != 1)
         {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+            return;
         }
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
         //spawn bullet
         var isPress = Input.GetKey(KeyCode.Space);
@@ -60,39 +58,49 @@ public partial struct SpawnBulletSystem : ISystem
             }
         }
 
+        new SpawnBulletEnemyJob { ECB = ecb, delta_Time = SystemAPI.Time.DeltaTime}.Schedule();
 
-        foreach (var (localToWorldComponent, BulletSpawnComponent) in SystemAPI.Query<RefRO<LocalToWorld>, RefRW<SpawnBullet>>().WithAll<EnemyComponent>())
-        {
-            if (BulletSpawnComponent.ValueRO.lastSpawnTime >= BulletSpawnComponent.ValueRO.spawnSpeed)
-            {
-                var position = new float3(1f, localToWorldComponent.ValueRO.Position.y, localToWorldComponent.ValueRO.Position.z);
-                var bulletEntity = ecb.Instantiate(BulletSpawnComponent.ValueRO.BulletPrefab);
-                ecb.SetComponent(bulletEntity,
-                    new LocalTransform
-                    {
-                        Position = position,
-                        Scale = 1f,
-                        Rotation = quaternion.identity
-                    });
-                ecb.AddComponent(bulletEntity,
-                    new BulletDirection
-                    {
-                        direction = BulletSpawnComponent.ValueRO.direction_bullet,
-                    });
-                ecb.AddComponent(bulletEntity,
-                    new BulletComponent
-                    {
-                        bulletOfPlayer = false,
-                    });
-                BulletSpawnComponent.ValueRW.lastSpawnTime = 0f;
-            }
-            else
-            {
-                BulletSpawnComponent.ValueRW.lastSpawnTime += SystemAPI.Time.DeltaTime;
-            }
-        }
-
+        state.Dependency.Complete();
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+}
+
+[BurstCompile]
+public partial struct SpawnBulletEnemyJob : IJobEntity
+{
+    public EntityCommandBuffer ECB;
+    public float delta_Time;
+
+    void Execute(RefRW<SpawnBullet> spawner, RefRW<LocalToWorld> localToWorld
+                , RefRO<EnemyComponent> enemyComponet, Entity entity)
+    {
+        if (spawner.ValueRO.lastSpawnTime >= spawner.ValueRO.spawnSpeed)
+        {
+            var position = new float3(1f, localToWorld.ValueRO.Position.y, localToWorld.ValueRO.Position.z);
+            var bulletEntity = ECB.Instantiate(spawner.ValueRO.BulletPrefab);
+            ECB.SetComponent(bulletEntity,
+                new LocalTransform
+                {
+                    Position = position,
+                    Scale = 1f,
+                    Rotation = quaternion.identity
+                });
+            ECB.AddComponent(bulletEntity,
+                new BulletDirection
+                {
+                    direction = spawner.ValueRO.direction_bullet,
+                });
+            ECB.AddComponent(bulletEntity,
+                new BulletComponent
+                {
+                    bulletOfPlayer = false,
+                });
+            spawner.ValueRW.lastSpawnTime = 0f;
+        }
+        else
+        {
+            spawner.ValueRW.lastSpawnTime += delta_Time;
+        }
     }
 }

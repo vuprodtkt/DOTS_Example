@@ -4,95 +4,93 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Physics;
 
-namespace Assets.script.Systems
+[BurstCompile]
+[UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
+[UpdateAfter(typeof(SimulationSystemGroup))]
+public partial struct EnemyCollideSystem : ISystem
 {
-    [BurstCompile]
-    [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(SimulationSystemGroup))]
-    public partial struct EnemyCollideSystem : ISystem
+    public void OnCreate(ref SystemState state)
     {
-        public void OnCreate(ref SystemState state)
+        state.RequireForUpdate<EnemyComponent>();
+        state.RequireForUpdate<PlayerComponent>();
+        state.RequireForUpdate<SimulationSingleton>();
+
+    }
+
+    [BurstCompile]
+    public partial struct JobCheckCollide : ITriggerEventsJob
+    {
+        public ComponentLookup<EnemyComponent> enemyLookup;
+        public ComponentLookup<PlayerComponent> playerLookup;
+        public EntityCommandBuffer ecb;
+
+        private bool IsEnemy(Entity e)
         {
-            state.RequireForUpdate<EnemyComponent>();
-            state.RequireForUpdate<PlayerComponent>();
-            state.RequireForUpdate<SimulationSingleton>();
-
+            return enemyLookup.HasComponent(e);
         }
 
-        [BurstCompile]
-        public partial struct JobCheckCollide : ITriggerEventsJob
+        private bool IsPlayer(Entity e)
         {
-            public ComponentLookup<EnemyComponent> enemyLookup;
-            public ComponentLookup<PlayerComponent> playerLookup;
-            public EntityCommandBuffer ecb;
+            return playerLookup.HasComponent(e);
+        }
 
-            private bool IsEnemy(Entity e)
+        public void Execute(TriggerEvent triggerEvent)
+        {
+            var isEnemyA = IsEnemy(triggerEvent.EntityA);
+            var isPlayerA = IsPlayer(triggerEvent.EntityA);
+
+            var isEnemyB = IsEnemy(triggerEvent.EntityB);
+            var isPlayerB = IsPlayer(triggerEvent.EntityB);
+
+            if (isEnemyA == isEnemyB || isPlayerA == isPlayerB)
             {
-                return enemyLookup.HasComponent(e);
+                return;
             }
 
-            private bool IsPlayer(Entity e)
+            var newEntity = ecb.CreateEntity();
+            if (isEnemyA)
             {
-                return playerLookup.HasComponent(e);
+                ecb.AddComponent(newEntity,
+                    new EnemyCollideDamageComponent
+                    {
+                        enemy = triggerEvent.EntityA,
+                        target = triggerEvent.EntityB
+                    });
             }
-
-            public void Execute(TriggerEvent triggerEvent)
+            else
             {
-                var isEnemyA = IsEnemy(triggerEvent.EntityA);
-                var isPlayerA = IsPlayer(triggerEvent.EntityA);
+                ecb.AddComponent(newEntity,
+                    new EnemyCollideDamageComponent
+                    {
+                        enemy = triggerEvent.EntityB,
+                        target = triggerEvent.EntityA
+                    });
+            }
+        }
+    }
 
-                var isEnemyB = IsEnemy(triggerEvent.EntityB);
-                var isPlayerB = IsPlayer(triggerEvent.EntityB);
+    [BurstCompile]
+    public void OnUpdate(ref SystemState state)
+    {
 
-                if(isEnemyA == isEnemyB || isPlayerA == isPlayerB)
-                {
-                    return;
-                }
-
-                var newEntity = ecb.CreateEntity();
-                if (isEnemyA)
-                {
-                    ecb.AddComponent(newEntity, 
-                        new EnemyCollideDamageComponent 
-                        { 
-                            enemy = triggerEvent.EntityA, 
-                            target = triggerEvent.EntityB 
-                        });
-                }
-                else
-                {
-                    ecb.AddComponent(newEntity,
-                        new EnemyCollideDamageComponent
-                        {
-                            enemy = triggerEvent.EntityB,
-                            target = triggerEvent.EntityA
-                        });
-                }
+        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        {
+            if (stateGanmecomponent.ValueRO.state != 1)
+            {
+                return;
             }
         }
 
-        [BurstCompile]
-        public void OnUpdate(ref SystemState state) {
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+        state.Dependency = new JobCheckCollide
+        {
+            ecb = ecb,
+            enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(),
+            playerLookup = SystemAPI.GetComponentLookup<PlayerComponent>(),
+        }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
 
-            foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
-            {
-                if (stateGanmecomponent.ValueRO.state != 1)
-                {
-                    return;
-                }
-            }
-
-            EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
-            state.Dependency = new JobCheckCollide
-            {
-                ecb = ecb,
-                enemyLookup = SystemAPI.GetComponentLookup<EnemyComponent>(),
-                playerLookup = SystemAPI.GetComponentLookup<PlayerComponent>(),
-            }.Schedule(SystemAPI.GetSingleton<SimulationSingleton>(), state.Dependency);
-
-            state.Dependency.Complete();
-            ecb.Playback(state.EntityManager);
-            ecb.Dispose();
-        }
+        state.Dependency.Complete();
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }

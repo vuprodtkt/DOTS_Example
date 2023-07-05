@@ -3,6 +3,7 @@ using Unity.Burst;
 using Unity.Entities;
 
 [BurstCompile]
+[UpdateAfter(typeof(SpawnSystem))]
 public partial struct LevelSystem : ISystem
 {
     [BurstCompile]
@@ -21,7 +22,7 @@ public partial struct LevelSystem : ISystem
         }
         foreach (var levelComponent in SystemAPI.Query<RefRW<LevelComponent>>().WithAll<SpawnEnemyTag>())
         {
-            if(levelComponent.ValueRO.currentLevel < levelComponent.ValueRO.maxLevel)
+            if (levelComponent.ValueRO.currentLevel < levelComponent.ValueRO.maxLevel)
             {
                 levelComponent.ValueRW.currentLevel = levelComponent.ValueRO.nextLevel;
             }

@@ -17,19 +17,13 @@ public partial struct SpawnSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
         //state.Enabled = false;
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        var StateGameSingleton = SystemAPI.GetSingleton<StateGameComponent>();
+        if (StateGameSingleton.state != 1)
         {
-            if(stateGanmecomponent.ValueRO.state != 1 )
-            {
-                return;
-            }
+            return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
-        //spawn enemy
-        var singletonComponent = SystemAPI.GetSingleton<ConfigComponent>();
-        new EnemySpawnJob {ConfigComponent = singletonComponent, ECB = ecb}.Schedule();
-        state.Dependency.Complete();
 
         //spawn player
         foreach (var spawnPlayerComponent in SystemAPI.Query<RefRW<SpawnPlayer>>())
@@ -41,13 +35,20 @@ public partial struct SpawnSystem : ISystem
                     new LocalTransform
                     {
                         Position = spawnPlayerComponent.ValueRO.position
-                        ,Rotation = quaternion.LookRotation(new float3(1, 0, 0), new float3(0, -1, 0))
-                        ,Scale = (float)1
+                        ,
+                        Rotation = quaternion.LookRotation(new float3(1, 0, 0), new float3(0, -1, 0))
+                        ,
+                        Scale = (float)1
                     });
                 spawnPlayerComponent.ValueRW.isSpawn = true;
             }
         }
-        
+
+        //spawn enemy
+        var singletonComponent = SystemAPI.GetSingleton<ConfigComponent>();
+        new EnemySpawnJob {ConfigComponent = singletonComponent, ECB = ecb}.Schedule();
+
+        state.Dependency.Complete();
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
     }

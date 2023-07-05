@@ -1,11 +1,9 @@
 ﻿using Assets.script.ComponentsAndTags;
-using Assets.script.Systems;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
 [BurstCompile]
-[UpdateAfter(typeof(BulletCollideSystem))]
 public partial struct EnemyCollideDamageSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
@@ -24,25 +22,39 @@ public partial struct EnemyCollideDamageSystem : ISystem
             }
         }
 
-        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var (enemyDamageComponent, entity) in SystemAPI.Query<RefRW<EnemyCollideDamageComponent>>().WithEntityAccess())
-        {
-            var enemyEntity = enemyDamageComponent.ValueRW.enemy;
-            var targetEntity = enemyDamageComponent.ValueRW.target;
+        new EnemyDamagePlayerJob { 
+            ECB = ecb, 
+            Manager = state.EntityManager, 
+            PlayerLookup = SystemAPI.GetComponentLookup<PlayerComponent>() 
+        }.Schedule();
 
-            var enemyDamage = state.EntityManager.GetComponentData<EnemyDamage>(enemyEntity);
-            ComponentLookup<PlayerComponent> PlayerLookup = SystemAPI.GetComponentLookup<PlayerComponent>();
-
-            if (PlayerLookup.HasComponent(targetEntity))
-            {
-                ecb.AddComponent(targetEntity, new TargetDamagedComponent { damaged = enemyDamage.damage });
-            }
-
-            ecb.DestroyEntity(entity);
-        }
-
+        state.Dependency.Complete();
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+    }
+}
+
+[BurstCompile]
+public partial struct EnemyDamagePlayerJob : IJobEntity
+{
+    public EntityCommandBuffer ECB;
+    public EntityManager Manager;
+    public ComponentLookup<PlayerComponent> PlayerLookup;
+
+    void Execute(RefRO<EnemyCollideDamageComponent> enemyDamageComponent, Entity entity)
+    {
+        var enemyEntity = enemyDamageComponent.ValueRO.enemy;
+        var targetEntity = enemyDamageComponent.ValueRO.target;
+
+        var enemyDamage = Manager.GetComponentData<EnemyDamage>(enemyEntity);
+
+        if (PlayerLookup.HasComponent(targetEntity))
+        {
+            ECB.AddComponent(targetEntity, new TargetDamagedComponent { damaged = enemyDamage.damage });
+        }
+
+        ECB.DestroyEntity(entity);
     }
 }
