@@ -20,16 +20,26 @@ namespace Assets.script.AuthoringAndMono
         // Update is called once per frame
         void Update()
         {
-            var stateGameComponent = entityManager.CreateEntityQuery(typeof(StateGameComponent))
-                                                        .GetSingleton<StateGameComponent>();
-            if(stateGameComponent.state != 1 && stateGameComponent.state != 3 && stateGameComponent.state != 4)
+            StateGameComponent stateGameComponent;
+            var isStateGameComponent = entityManager.CreateEntityQuery(typeof(StateGameComponent)).TryGetSingleton<StateGameComponent>(out stateGameComponent);
+            if (!isStateGameComponent)
+            {
+                return;
+            }
+            if (stateGameComponent.state != 1 && stateGameComponent.state != 3 && stateGameComponent.state != 4)
             {
                 return;
             }
 
-            var healthPlayerComponent = entityManager.CreateEntityQuery(typeof(HealthComponent)
+            HealthComponent healthPlayerComponent; 
+            var isHealthComponent = entityManager.CreateEntityQuery(typeof(HealthComponent)
                                                                         , typeof(PlayerComponent))
-                                                    .GetSingleton<HealthComponent>();
+                                                    .TryGetSingleton<HealthComponent>(out healthPlayerComponent);
+            if (!isHealthComponent)
+            {
+                displayHealthBar(0);
+                return;
+            }
             displayHealthBar((int)healthPlayerComponent.health);
         }
 

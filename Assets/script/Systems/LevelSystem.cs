@@ -6,6 +6,7 @@ using Unity.Entities;
 [UpdateAfter(typeof(SpawnSystem))]
 public partial struct LevelSystem : ISystem
 {
+
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
@@ -27,5 +28,6 @@ public partial struct LevelSystem : ISystem
                 levelComponent.ValueRW.currentLevel = levelComponent.ValueRO.nextLevel;
             }
         }
+
     }
 }

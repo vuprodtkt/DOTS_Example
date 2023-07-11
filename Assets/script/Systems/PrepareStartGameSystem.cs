@@ -4,24 +4,23 @@ using Unity.Collections;
 using Unity.Entities;
 
 [BurstCompile]
-[UpdateBefore(typeof(SpawnSystem))]
 public partial struct PrepareStartGameSystem : ISystem
 {
     public void OnCreate(ref SystemState state)
     {
-        state.RequireForUpdate<StateGameComponent>();
+        state.RequireForUpdate<StateGameMessage>();
     }
 
     public void OnUpdate(ref SystemState state)
     {
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
 
-        foreach (var stateGameComponent in SystemAPI.Query<RefRW<StateGameComponent>>())
+        foreach (var stateGameMessage in SystemAPI.Query<RefRO<StateGameMessage>>())
         {
-            if (stateGameComponent.ValueRO.state == 0 || stateGameComponent.ValueRO.state == 5)
+            if(stateGameMessage.ValueRO.state == 0 || stateGameMessage.ValueRO.state == 5)
             {
                 // prepare start game
-                foreach (var (levelComponent, scoreComponent, spawnerPlayer) 
+                foreach (var (levelComponent, scoreComponent, spawnerPlayer)
                     in SystemAPI.Query<RefRW<LevelComponent>, RefRW<ScoreComponent>, RefRW<SpawnPlayer>>()
                                 .WithAll<SpawnEnemyTag>())
                 {
@@ -36,13 +35,8 @@ public partial struct PrepareStartGameSystem : ISystem
                 new DestroyAllEnemyJob { ECB = ecb }.Schedule();
                 new DestroyPlayerJob { ECB = ecb }.Schedule();
                 new DestroyAllBulletJob { ECB = ecb }.Schedule();
-
-                //restart game
-                if (stateGameComponent.ValueRO.state == 5)
-                {
-                    stateGameComponent.ValueRW.state = 1;
-                }
             }
+            
         }
 
         state.Dependency.Complete();

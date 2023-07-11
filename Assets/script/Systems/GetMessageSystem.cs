@@ -1,5 +1,6 @@
 ﻿using Assets.script.ComponentsAndTags;
 using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
 
 [DisableAutoCreation]
@@ -21,5 +22,15 @@ public partial struct GetMessageSystem : ISystem
                 stateGameComponent.ValueRW.state = stateGameMessage.ValueRO.state;
             }
         }
+
+        EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.Temp);
+
+        foreach (var (changeStateGameComponent, entity) in SystemAPI.Query<RefRO<ChangeStateGameComponent>>().WithEntityAccess())
+        {
+            ecb.DestroyEntity(entity);
+        }
+
+        ecb.Playback(state.EntityManager);
+        ecb.Dispose();
     }
 }

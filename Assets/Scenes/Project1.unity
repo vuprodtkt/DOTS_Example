@@ -497,7 +497,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &230144633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2139,12 +2139,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0abc9bd32998a274b9b5886beb3908b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UI_canvas: {fileID: 1782016666}
-  m_pauseGame_button: {fileID: 490011994}
-  m_game_state: {fileID: 1755338770}
-  m_background_pauseGame: {fileID: 105646487}
-  m_restart_button: {fileID: 144454375}
-  m_home_button: {fileID: 94615747}
+  m_button_start: {fileID: 1287602225}
+  m_button_pause: {fileID: 490011994}
+  m_text_endGame: {fileID: 1755338770}
+  m_bg_stateGame: {fileID: 105646487}
+  m_button_restart: {fileID: 144454375}
+  m_button_home: {fileID: 94615747}
+  m_canvas_menu: {fileID: 230144635}
+  m_canvas_gameUI: {fileID: 1782016666}
 --- !u!4 &1849304899
 Transform:
   m_ObjectHideFlags: 0
