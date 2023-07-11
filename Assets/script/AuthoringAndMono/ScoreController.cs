@@ -20,8 +20,12 @@ namespace Assets.script.AuthoringAndMono
         // Update is called once per frame
         void Update()
         {
-            var scoreComponent = entityManager.CreateEntityQuery(typeof(ScoreComponent)).GetSingleton<ScoreComponent>();
-            writeScore(scoreComponent.score);
+            ScoreComponent scoreComponent;
+            var isScoreComponent = entityManager.CreateEntityQuery(typeof(ScoreComponent)).TryGetSingleton<ScoreComponent>(out scoreComponent);
+            if(isScoreComponent)
+            {
+                writeScore(scoreComponent.score);
+            }
         }
 
         private void writeScore(int score)

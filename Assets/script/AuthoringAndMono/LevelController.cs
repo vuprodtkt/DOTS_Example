@@ -21,8 +21,12 @@ namespace Assets.script.AuthoringAndMono
         // Update is called once per frame
         void Update()
         {
-            var levelComponent = entityManager.CreateEntityQuery(typeof(LevelComponent)).GetSingleton<LevelComponent>();
-            writeLevel(levelComponent.currentLevel);
+            LevelComponent levelComponent;
+            var isLevelComponent = entityManager.CreateEntityQuery(typeof(LevelComponent)).TryGetSingleton<LevelComponent>(out levelComponent);
+            if(isLevelComponent)
+            {
+                writeLevel(levelComponent.currentLevel);
+            }
         }
 
         private void writeLevel(int level)
