@@ -14,12 +14,11 @@ public partial struct EnemyCollideDamageSystem : ISystem
     [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        StateGameComponent stateGameSingleton;
+        var isStateGame = SystemAPI.TryGetSingleton(out stateGameSingleton);
+        if (!isStateGame || stateGameSingleton.state != 1)
         {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+            return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);

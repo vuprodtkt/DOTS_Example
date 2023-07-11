@@ -12,11 +12,11 @@ public partial struct BulletDamageSystem : ISystem
         state.RequireForUpdate<BulletDamageComponent>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        var StateGameSingleton = SystemAPI.GetSingleton<StateGameComponent>();
-        if(StateGameSingleton.state != 1)
+        StateGameComponent stateGameSingleton;
+        var isStateGame = SystemAPI.TryGetSingleton(out stateGameSingleton);
+        if (!isStateGame || stateGameSingleton.state != 1)
         {
             return;
         }

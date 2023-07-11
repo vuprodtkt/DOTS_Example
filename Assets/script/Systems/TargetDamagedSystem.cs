@@ -11,15 +11,12 @@ public partial struct TargetDamagedSystem : ISystem
         state.RequireForUpdate<TargetDamagedComponent>();
     }
 
-    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
-        {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+        StateGameComponent stateGameSingleton;
+        var isStateGame = SystemAPI.TryGetSingleton(out stateGameSingleton);
+        if (!isStateGame || stateGameSingleton.state != 1) {
+            return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);

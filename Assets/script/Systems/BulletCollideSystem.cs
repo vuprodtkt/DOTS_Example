@@ -43,78 +43,23 @@ public partial struct BulletCollideSystem : ISystem
 
         public void Execute(TriggerEvent triggerEvent)
         {
-            //var isEnemyA = IsEnemy(triggerEvent.EntityA);
+            var isEnemyA = IsEnemy(triggerEvent.EntityA);
             var isBulletA = IsBullet(triggerEvent.EntityA);
-            //var isPlayerA = IsPlayer(triggerEvent.EntityA);
+            var isPlayerA = IsPlayer(triggerEvent.EntityA);
 
-            //var isEnemyB = IsEnemy(triggerEvent.EntityB);
+            var isEnemyB = IsEnemy(triggerEvent.EntityB);
             var isBulletB = IsBullet(triggerEvent.EntityB);
-            //var isPlayerB = IsPlayer(triggerEvent.EntityB);
+            var isPlayerB = IsPlayer(triggerEvent.EntityB);
 
             if (isBulletA == isBulletB)
             {
                 return;
             }
 
-            //var validA = (isEnemyA != isBulletA);
-            //if (!validA)
-            //{
-            //    return;
-            //}
-
-            //var validB = (isEnemyB != isBulletB);
-            //if (!validB)
-            //{
-            //    return;
-            //}
-
-            //var v = (isEnemyA == isBulletB) || (isBulletA == isEnemyB);
-            //if (!v)
-            //{
-            //    return;
-            //}
-
-
-            ////addtag(hitted)
-            //var destroyableA = false;
-            //var destroyableB = false;
-            //if (enemyLookup.HasComponent(triggerEvent.EntityA))
-            //{
-            //    if (enemyLookup.IsComponentEnabled(triggerEvent.EntityA))
-            //    {
-            //        ecb.SetComponentEnabled<EnemyComponent>(triggerEvent.EntityA, false);
-            //        destroyableA = true;
-            //    }
-            //    //a is enemy
-            //}
-            //else if (bulletLookup.HasComponent(triggerEvent.EntityA))
-            //{
-            //    if (bulletLookup.IsComponentEnabled(triggerEvent.EntityA))
-            //    {
-            //        //a is bullet
-            //        ecb.SetComponentEnabled<BulletComponent>(triggerEvent.EntityA, false);
-            //        destroyableA = true;
-            //    }
-            //}
-
-            //if (enemyLookup.HasComponent(triggerEvent.EntityB))
-            //{
-            //    if (enemyLookup.IsComponentEnabled(triggerEvent.EntityB))
-            //    {
-            //        ecb.SetComponentEnabled<EnemyComponent>(triggerEvent.EntityB, false);
-            //        destroyableB = true;
-            //    }
-            //    //b is enemy
-            //}
-            //else if (bulletLookup.HasComponent(triggerEvent.EntityB))
-            //{
-            //    if (bulletLookup.IsComponentEnabled(triggerEvent.EntityB))
-            //    {
-            //        ecb.SetComponentEnabled<BulletComponent>(triggerEvent.EntityB, false);
-            //        destroyableB = true;
-            //    }
-            //    //b is bullet
-            //}
+            if (isEnemyA == isEnemyB && isPlayerA == isPlayerB)
+            {
+                return;
+            }
 
             var newEntity = ecb.CreateEntity();
             if (isBulletA)
@@ -142,12 +87,11 @@ public partial struct BulletCollideSystem : ISystem
     public void OnUpdate(ref SystemState state)
     {
 
-        foreach (var stateGanmecomponent in SystemAPI.Query<RefRO<StateGameComponent>>())
+        StateGameComponent stateGameSingleton;
+        var isStateGame = SystemAPI.TryGetSingleton(out stateGameSingleton);
+        if (!isStateGame || stateGameSingleton.state != 1)
         {
-            if (stateGanmecomponent.ValueRO.state != 1)
-            {
-                return;
-            }
+            return;
         }
 
         EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
